@@ -78,3 +78,16 @@ def get_action_item(db: Session, action_item_id: int) -> Optional[models.ActionI
 
 def get_action_items(db: Session, skip: int = 0, limit: int = 100) -> List[models.ActionItem]:
     return db.query(models.ActionItem).offset(skip).limit(limit).all()
+
+def create_incident(db: Session, incident: schemas.IncidentCreate) -> models.Incident:
+    db_incident = models.Incident(**incident.dict())
+    db.add(db_incident)
+    db.commit()
+    db.refresh(db_incident)
+    return db_incident
+
+def get_incident(db: Session, incident_id: int):
+    return db.query(models.Incident).filter(models.Incident.id == incident_id).first()
+
+def get_incidents(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Incident).offset(skip).limit(limit).all()

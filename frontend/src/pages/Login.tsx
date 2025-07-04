@@ -34,11 +34,14 @@ const Card = styled.div`
 const Title = styled.h2`
   font-size: 2rem;
   font-weight: 800;
-  background: var(--color-bg-gradient);
+  background: linear-gradient(90deg, #fff 0%, #60a5fa 100%);
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   color: transparent;
   margin-bottom: 1.5rem;
   text-align: center;
+  text-shadow: 0 2px 12px rgba(30, 64, 175, 0.18), 0 1px 0 #fff;
 `;
 
 const Input = styled.input`

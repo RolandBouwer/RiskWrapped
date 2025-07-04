@@ -63,3 +63,17 @@ class ActionItem(Base):
 
     risk = relationship("Risk", back_populates="action_items")
     assigned_to_user = relationship("User", back_populates="action_items")
+
+
+class Incident(Base):
+    __tablename__ = "incidents"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(Text)
+    root_cause = Column(Text)
+    loss_amount = Column(Integer, nullable=True)  # Use Integer or Float as needed
+    is_financial = Column(Boolean, default=False)
+    node_id = Column(Integer, ForeignKey("nodes.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    node = relationship("Node", backref="incidents")

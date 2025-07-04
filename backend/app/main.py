@@ -5,6 +5,11 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from .database import engine, Base, get_db
 from .routes import users, nodes, risks, insights
+from .routes import insights as insights_router
+from .routes import users as users_router
+from .routes import nodes as nodes_router
+from .routes import risks as risks_router
+from .routes import incidents
 from . import crud, models, schemas, ai
 import os
 from datetime import datetime, timedelta
@@ -16,6 +21,7 @@ app.include_router(users.router)
 app.include_router(nodes.router)
 app.include_router(risks.router)
 app.include_router(insights.router)
+app.include_router(incidents.router)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
 ALGORITHM = "HS256"

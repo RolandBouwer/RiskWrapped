@@ -27,6 +27,14 @@ usernames = ["alice", "bob", "carol", "dave", "eve", "frank", "grace", "heidi", 
 risk_types = ["third_party", "change", "incident", "regulatory", "operational"]
 risk_statuses = ["open", "closed", "in progress"]
 action_statuses = ["open", "closed", "pending"]
+incident_names = [
+    "System Outage", "Fraudulent Transaction", "Data Breach", "Process Failure", "Vendor Disruption",
+    "Cyber Attack", "Compliance Violation", "Market Loss", "Theft", "Natural Disaster"
+]
+incident_root_causes = [
+    "Human Error", "System Failure", "External Attack", "Process Gap", "Third-Party Issue",
+    "Regulatory Change", "Market Volatility", "Insider Threat", "Lack of Controls", "Force Majeure"
+]
 
 def sanitize_email_country(country):
     # Remove non-ASCII, replace spaces and apostrophes
@@ -131,6 +139,23 @@ def seed():
                                             status=astatus
                                         )
                                         crud.create_action_item(db, action_create)
+                            # Add incidents (mix of financial and non-financial)
+                            incident_count = random.randint(2, 4)
+                            for i in range(incident_count):
+                                is_financial = random.random() < 0.5
+                                name = random.choice(incident_names)
+                                description = f"{name} occurred in {bu_name}, {segment}, {country}."
+                                root_cause = random.choice(incident_root_causes)
+                                loss_amount = round(random.uniform(1000, 500000), 2) if is_financial else None
+                                incident_create = schemas.IncidentCreate(
+                                    name=name,
+                                    description=description,
+                                    root_cause=root_cause,
+                                    loss_amount=loss_amount,
+                                    is_financial=is_financial,
+                                    node_id=bu_node.id
+                                )
+                                crud.create_incident(db, incident_create)
     # Isle of Man and Jersey (no subregions)
     for country in ["Isle of Man", "Jersey"]:
         country_node = crud.create_node(db, schemas.NodeCreate(name=country, parent_id=root.id, level=2))
@@ -194,6 +219,23 @@ def seed():
                                 status=astatus
                             )
                             crud.create_action_item(db, action_create)
+                # Add incidents (mix of financial and non-financial)
+                incident_count = random.randint(2, 4)
+                for i in range(incident_count):
+                    is_financial = random.random() < 0.5
+                    name = random.choice(incident_names)
+                    description = f"{name} occurred in {bu_name}, {segment}, {country}."
+                    root_cause = random.choice(incident_root_causes)
+                    loss_amount = round(random.uniform(1000, 500000), 2) if is_financial else None
+                    incident_create = schemas.IncidentCreate(
+                        name=name,
+                        description=description,
+                        root_cause=root_cause,
+                        loss_amount=loss_amount,
+                        is_financial=is_financial,
+                        node_id=bu_node.id
+                    )
+                    crud.create_incident(db, incident_create)
     db.close()
     print("Seeding complete. Database reset and populated with a rich hierarchy of nodes, users, risks, and actions!")
 

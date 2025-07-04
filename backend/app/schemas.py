@@ -76,3 +76,24 @@ class ActionItem(ActionItemBase):
 
     class Config:
         from_attributes = True
+
+
+class IncidentBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    root_cause: Optional[str] = None
+    loss_amount: Optional[float] = None
+    is_financial: bool = False
+    node_id: int
+
+
+class IncidentCreate(IncidentBase):
+    pass
+
+
+class Incident(IncidentBase):
+    id: int
+    created_at: datetime.datetime
+
+    class Config:
+        from_attributes = True
