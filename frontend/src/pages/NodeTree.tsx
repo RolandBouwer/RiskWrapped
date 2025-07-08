@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-// @ts-expect-error: No types for react-tree-graph
-import Tree from 'react-tree-graph';
+import { Tree } from 'react-tree-graph';
 import 'react-tree-graph/dist/style.css';
 import '../App.css';
 

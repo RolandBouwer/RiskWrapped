@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import UserProfile from './pages/UserProfile';
 import RiskDetails from './pages/RiskDetails';
+import NodeTree from './pages/NodeTree';
 import './index.css';
 import { FaUserCircle, FaChevronDown, FaSignOutAlt, FaLifeRing } from 'react-icons/fa';
 
@@ -136,6 +137,7 @@ const App: React.FC = () => {
         <nav style={{ display: 'flex', gap: '1.5rem', padding: '1.5rem 2rem', alignItems: 'center', background: 'rgba(16,23,42,0.7)', borderRadius: '0 0 2rem 2rem', boxShadow: '0 2px 16px 0 rgba(58,141,222,0.08)', marginBottom: '2rem', position: 'relative' }}>
           <span style={{ fontWeight: 900, fontSize: '1.5rem', background: 'var(--color-bg-gradient)', WebkitBackgroundClip: 'text', color: 'transparent', letterSpacing: '-1px' }}>Risk Wrapped</span>
           <Link to="/dashboard" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>Dashboard</Link>
+          <Link to="/nodetree" style={{ color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>Node Tree</Link>
           <div style={{ marginLeft: 'auto' }} />
           <AvatarMenu />
         </nav>
@@ -143,6 +145,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<PrivateRoute component={<Dashboard />} />} />
           <Route path="/profile" element={<PrivateRoute component={<UserProfile />} />} />
+          <Route path="/nodetree" element={<PrivateRoute component={<NodeTree />} />} />
           <Route path="/risks/:id" element={<PrivateRoute component={<RiskDetails />} />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
