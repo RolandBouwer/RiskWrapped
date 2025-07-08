@@ -1,10 +1,10 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import RiskCard from '../components/RiskCard';
 import CostCenterChart from '../components/CostCenterChart';
 import TrendChart from '../components/TrendChart';
 import AIInsightCard from '../components/AIInsightCard';
-import IncidentCard from '../components/IncidentCard';
+import { getCurrentUser, getIncidents, getRisks, getActions, getAIInsights } from '../api';
+import { useEffect, useState } from 'react';
 
 const Grid = styled.div`
   display: grid;
@@ -69,48 +69,72 @@ const SubTitle = styled.h2`
 `;
 
 const Dashboard: React.FC = () => {
-  // Sample data for demonstration
-  const sampleIncidents = [
-    {
-      name: 'System Outage',
-      description: 'System Outage occurred in Business Unit A, Consumer & Community Banking, Kenya.',
-      root_cause: 'System Failure',
-      loss_amount: 25000.0,
-      is_financial: true,
-    },
-    {
-      name: 'Compliance Violation',
-      description: 'Compliance Violation occurred in Business Unit B, Corporate & Investment Bank, Nigeria.',
-      root_cause: 'Regulatory Change',
-      loss_amount: null,
-      is_financial: false,
-    },
-  ];
-  const sampleActions = [
-    { description: 'Review vendor contracts', status: 'open' },
-    { description: 'Update incident response plan', status: 'pending' },
-  ];
+  const [incidents, setIncidents] = useState<any[]>([]);
+  const [risks, setRisks] = useState<any[]>([]);
+  const [actions, setActions] = useState<any[]>([]);
+  const [aiInsights, setAIInsights] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const userData = await getCurrentUser();
+        // Fetch incidents, risks, actions filtered by user's node or user id
+        const [incidentsData, risksData, actionsData, aiData] = await Promise.all([
+          getIncidents({ node_id: userData.node_id }),
+          getRisks(), // TODO: Add node_id filter when backend supports it
+          getActions({ assigned_to: userData.id }),
+          getAIInsights({ node_id: userData.node_id })
+        ]);
+        setIncidents(incidentsData);
+        setRisks(risksData);
+        setActions(actionsData);
+        setAIInsights(aiData);
+      } catch (err: any) {
+        setError('Failed to load dashboard data.');
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <div>Loading dashboard...</div>;
+  if (error) return <div style={{ color: '#f76f91', fontWeight: 600 }}>{error}</div>;
+
   return (
     <div style={{ padding: '2rem', minHeight: '100vh' }}>
       <MainTitle>Risk Wrapped</MainTitle>
       <SubTitle>Your 2024 Risk Management Story</SubTitle>
       <Grid>
-        {/* Top row: Incidents */}
-        {sampleIncidents.map((incident, idx) => (
-          <IncidentCard key={idx} {...incident} />
-        ))}
-        {/* Risks */}
-        <RiskCard title="Third Party Risk" score={87} type="Vendor" trend="up" />
-        <RiskCard title="Change Risk" score={72} type="System" trend="down" />
-        <RiskCard title="Incident" score={65} type="Security" trend="flat" />
-        {/* Actions (as cards) */}
-        {sampleActions.map((action, idx) => (
-          <div className="card" key={idx} style={{ minWidth: 260, maxWidth: 340 }}>
-            <div style={{ fontWeight: 700, color: 'var(--color-primary)', marginBottom: 8 }}>Action</div>
-            <div style={{ fontSize: '1.1rem', color: 'var(--color-text)' }}>{action.description}</div>
-            <div style={{ fontSize: '0.95rem', color: 'var(--color-secondary)', marginTop: 6 }}>Status: {action.status}</div>
+        {/* Incidents count card */}
+        <div className="card" style={{ minWidth: 260, maxWidth: 340 }}>
+          <div style={{ fontWeight: 700, color: 'var(--color-primary)', marginBottom: 8 }}>Incidents</div>
+          <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--color-accent)' }}>{incidents.length}</div>
+        </div>
+        {/* Risks count card */}
+        <div className="card" style={{ minWidth: 260, maxWidth: 340 }}>
+          <div style={{ fontWeight: 700, color: 'var(--color-primary)', marginBottom: 8 }}>Risks</div>
+          <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--color-accent)' }}>{risks.length}</div>
+        </div>
+        {/* Actions count card */}
+        <div className="card" style={{ minWidth: 260, maxWidth: 340 }}>
+          <div style={{ fontWeight: 700, color: 'var(--color-primary)', marginBottom: 8 }}>Actions</div>
+          <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--color-accent)' }}>{actions.length}</div>
+        </div>
+        {/* AI Insights card */}
+        <div className="card" style={{ minWidth: 320, maxWidth: 420 }}>
+          <div style={{ fontWeight: 700, color: 'var(--color-primary)', marginBottom: 8 }}>AI Insights</div>
+          <div style={{ fontSize: '1.1rem', color: 'var(--color-text)' }}>
+            {Array.isArray(aiInsights) && aiInsights.length > 0
+              ? aiInsights.map((insight: any, idx: number) => (
+                  <div key={idx} style={{ marginBottom: 8 }}>{insight.insight || JSON.stringify(insight)}</div>
+                ))
+              : 'No insights available.'}
           </div>
-        ))}
+        </div>
         {/* Other charts/cards */}
         <CostCenterChart />
         <TrendChart />

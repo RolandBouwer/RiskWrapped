@@ -38,4 +38,19 @@ export const getRisk = async (id: number) => {
   return res.data;
 };
 
+export const getIncidents = async (params = {}) => {
+  const res = await api.get('/incidents', { params });
+  return res.data;
+};
+
+export const getActions = async (params = {}) => {
+  const res = await api.get('/action_items', { params });
+  return res.data;
+};
+
+export const getAIInsights = async (params = {}) => {
+  const res = await api.get('/insights', { params });
+  return res.data;
+};
+
 export default api; 

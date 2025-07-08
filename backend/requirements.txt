@@ -11,3 +11,6 @@ email-validator
 passlib[bcrypt]
 python-jose
 python-multipart
+transformers
+pandas
+torch

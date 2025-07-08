@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+import pandas as pd
+import torch
 
 load_dotenv()
 
@@ -18,11 +20,56 @@ try:
     import deepseek
 except ImportError:
     deepseek = None
+try:
+    from transformers import pipeline, AutoTokenizer, AutoModelForQuestionAnswering, AutoModelForSequenceClassification, AutoModelWithLMHead
+except ImportError:
+    pipeline = None
+    AutoTokenizer = None
+    AutoModelForQuestionAnswering = None
+    AutoModelForSequenceClassification = None
+    AutoModelWithLMHead = None
 
 
-def get_insight(text: str) -> str:
-    """Generate an insight using the configured AI provider."""
-    if AI_PROVIDER == "google":
+def df_to_table_dict(df: pd.DataFrame) -> dict:
+    """
+    Convert a pandas DataFrame to the dictionary format required by Hugging Face table QA/summarization models.
+    Example output: {"column1": [..], "column2": [..], ...}
+    """
+    return df.to_dict(orient="list")
+
+
+def get_insight(text: str, table=None, task: str = "qa") -> str:
+    """
+    Generate an insight using the configured AI provider.
+    If using Hugging Face transformers and table is a DataFrame, it will be converted automatically.
+    """
+    if AI_PROVIDER == "hf_transformers":
+        if not pipeline:
+            return "Transformers not installed."
+        # If table is a DataFrame, convert it
+        if isinstance(table, pd.DataFrame):
+            table = df_to_table_dict(table)
+        # Table QA (Tapas, TAPEX)
+        if task == "qa" and table is not None:
+            qa_pipe = pipeline(
+                "table-question-answering",
+                model="google/tapas-large-finetuned-wtq"
+            )
+            result = qa_pipe(table=table, query=text)
+            return result["answer"]
+        # Table summarization (BART-large-CNN)
+        elif task == "summarization" and table is not None:
+            # Use facebook/bart-large-cnn for table-to-text summarization
+            summarizer = pipeline(
+                "summarization",
+                model="facebook/bart-large-cnn"
+            )
+            table_str = str(table)
+            result = summarizer(table_str)
+            return result[0]["summary_text"]
+        else:
+            return "Task or table not supported for Hugging Face transformers."
+    elif AI_PROVIDER == "google":
         api_key = os.getenv("GOOGLE_API_KEY")
         if not genai or not api_key:
             return "Google AI Studio not configured."
@@ -33,10 +80,11 @@ def get_insight(text: str) -> str:
         return response.text
     elif AI_PROVIDER == "deepseek":
         api_key = os.getenv("DEEPSEEK_API_KEY")
-        if not deepseek or not api_key:
+        if not api_key:
             return "DeepSeek not configured."
-        # Example DeepSeek usage (pseudo-code, adjust to SDK)
-        client = deepseek.Client(api_key=api_key)
+        # Use OpenAI-compatible client for DeepSeek
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
         response = client.chat.completions.create(
             model="deepseek-chat",
             messages=[{"role": "user", "content": text}]
@@ -63,8 +111,9 @@ def get_insight(text: str) -> str:
         if not openai or not api_key:
             return "OpenAI not configured."
         openai.api_key = api_key
-        response = openai.ChatCompletion.create(
+        openai.api_type = "openai"
+        response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": text}]
         )
-        return response.choices[0].message["content"]
+        return response.choices[0].message.content
