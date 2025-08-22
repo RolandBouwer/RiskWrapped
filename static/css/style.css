@@ -1,0 +1,172 @@
+/* Custom styles for Risk Insights HTMX app */
+
+.nav-link {
+    @apply text-blue-200 hover:text-white transition-colors duration-200 font-medium;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg;
+}
+
+.btn-secondary {
+    @apply bg-blue-800/50 hover:bg-blue-700/50 text-blue-200 hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 border border-blue-600/50;
+}
+
+.card {
+    @apply bg-blue-800/30 backdrop-blur-sm border border-blue-700/50 rounded-2xl p-6 shadow-xl;
+}
+
+.card-title {
+    @apply text-xl font-bold text-white mb-4;
+}
+
+.metric-card {
+    @apply bg-gradient-to-br from-blue-800/50 to-blue-900/50 backdrop-blur-sm border border-blue-700/50 rounded-xl p-6 shadow-lg flex items-center space-x-4;
+}
+
+.metric-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center text-white;
+}
+
+.metric-value {
+    @apply text-2xl font-bold text-white;
+}
+
+.metric-label {
+    @apply text-blue-200 text-sm;
+}
+
+.status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.status-open {
+    @apply bg-red-500/20 text-red-300 border border-red-500/50;
+}
+
+.status-in-progress {
+    @apply bg-yellow-500/20 text-yellow-300 border border-yellow-500/50;
+}
+
+.status-closed {
+    @apply bg-green-500/20 text-green-300 border border-green-500/50;
+}
+
+.risk-type-badge {
+    @apply px-2 py-1 rounded text-xs font-medium;
+}
+
+.risk-type-third-party {
+    @apply bg-purple-500/20 text-purple-300;
+}
+
+.risk-type-change {
+    @apply bg-blue-500/20 text-blue-300;
+}
+
+.risk-type-incident {
+    @apply bg-red-500/20 text-red-300;
+}
+
+.risk-type-regulatory {
+    @apply bg-yellow-500/20 text-yellow-300;
+}
+
+.risk-type-operational {
+    @apply bg-green-500/20 text-green-300;
+}
+
+.financial-badge {
+    @apply bg-red-500/20 text-red-300 border border-red-500/50 px-2 py-1 rounded text-xs font-semibold;
+}
+
+.non-financial-badge {
+    @apply bg-blue-500/20 text-blue-300 border border-blue-500/50 px-2 py-1 rounded text-xs font-semibold;
+}
+
+.risk-card, .incident-card {
+    @apply bg-blue-900/30 border border-blue-700/30 rounded-lg p-4 hover:bg-blue-900/40 transition-colors duration-200;
+}
+
+.risk-item, .incident-item {
+    @apply bg-blue-900/20 border border-blue-700/30 rounded-lg p-4;
+}
+
+/* Tree styles */
+.tree-container {
+    @apply space-y-2;
+}
+
+.tree-node {
+    @apply ml-4;
+}
+
+.tree-children {
+    @apply ml-6 mt-2 space-y-2;
+}
+
+.node-button {
+    @apply w-full text-left bg-blue-800/30 hover:bg-blue-700/40 border border-blue-600/50 rounded-lg p-3 transition-all duration-200 flex items-center justify-between;
+}
+
+.node-button:hover {
+    @apply transform scale-105 shadow-lg;
+}
+
+.node-name {
+    @apply text-white font-medium;
+}
+
+.node-level {
+    @apply text-blue-300 text-sm bg-blue-700/50 px-2 py-1 rounded;
+}
+
+.level-1 .node-button {
+    @apply bg-gradient-to-r from-blue-700/50 to-blue-800/50 border-blue-500/50;
+}
+
+.level-2 .node-button {
+    @apply bg-gradient-to-r from-blue-800/40 to-blue-900/40;
+}
+
+.level-3 .node-button {
+    @apply bg-blue-900/30;
+}
+
+/* HTMX indicators */
+.htmx-indicator {
+    @apply hidden;
+}
+
+.htmx-request .htmx-indicator {
+    @apply flex items-center justify-center space-x-3 py-8;
+}
+
+.loading-spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card, .metric-card, .risk-card, .incident-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .metric-card {
+        @apply flex-col text-center space-x-0 space-y-3;
+    }
+    
+    .tree-node {
+        @apply ml-2;
+    }
+    
+    .tree-children {
+        @apply ml-4;
+    }
+}

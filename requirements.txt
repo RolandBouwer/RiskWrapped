@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+sqlalchemy
+psycopg2-binary
+pydantic
+python-dotenv
+openai
+google-generativeai
+deepseek
+email-validator
+passlib[bcrypt]
+python-jose[cryptography]
+transformers
+pandas
+torch

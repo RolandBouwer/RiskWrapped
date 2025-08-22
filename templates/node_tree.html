@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Organization Tree - Risk Insights{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent mb-2">
+            Organization Tree
+        </h1>
+        <p class="text-blue-200 text-lg">Click on any node to view insights</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Tree Structure -->
+        <div class="card">
+            <h3 class="card-title">Organizational Hierarchy</h3>
+            <div class="tree-container">
+                {% macro render_tree(nodes) %}
+                    {% for node in nodes %}
+                    <div class="tree-node">
+                        <button 
+                            hx-get="/insights/{{ node.id }}" 
+                            hx-target="#insights-panel"
+                            hx-indicator="#loading"
+                            class="node-button level-{{ node.level }}"
+                        >
+                            <span class="node-name">{{ node.name }}</span>
+                            <span class="node-level">L{{ node.level }}</span>
+                        </button>
+                        {% if node.children %}
+                        <div class="tree-children">
+                            {{ render_tree(node.children) }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endmacro %}
+                
+                {{ render_tree(tree) }}
+            </div>
+        </div>
+
+        <!-- Insights Panel -->
+        <div class="card">
+            <h3 class="card-title">Node Insights</h3>
+            <div id="loading" class="htmx-indicator">
+                <div class="loading-spinner"></div>
+                <p class="text-blue-200">Loading insights...</p>
+            </div>
+            <div id="insights-panel" class="min-h-64">
+                <p class="text-blue-300">Select a node from the tree to view detailed insights.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

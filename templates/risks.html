@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Risks - Risk Insights{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent mb-2">
+            Risk Management
+        </h1>
+        <p class="text-blue-200 text-lg">All risks within your organizational scope</p>
+    </div>
+
+    <div class="card">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="card-title">Risk Portfolio</h3>
+            <div class="text-blue-200">{{ risks|length }} total risks</div>
+        </div>
+
+        <div class="grid gap-4">
+            {% for risk in risks %}
+            <div class="risk-card">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-white mb-2">{{ risk.title }}</h4>
+                        <p class="text-blue-200 mb-3">{{ risk.description }}</p>
+                        <div class="flex items-center space-x-4 text-sm">
+                            <span class="risk-type-badge risk-type-{{ risk.risk_type.replace('_', '-') }}">
+                                {{ risk.risk_type.replace('_', ' ').title() }}
+                            </span>
+                            <span class="text-blue-300">
+                                Created: {{ risk.created_at.strftime('%Y-%m-%d') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <span class="status-badge status-{{ risk.status.replace(' ', '-') }}">
+                            {{ risk.status.title() }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if not risks %}
+            <div class="text-center py-12">
+                <div class="text-blue-300 text-lg">No risks found in your organizational scope.</div>
+                <p class="text-blue-400 mt-2">This could mean excellent risk management or limited access permissions.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

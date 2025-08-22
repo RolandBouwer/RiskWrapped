@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Risk Insights{% endblock %}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 min-h-screen text-white">
+    {% if user %}
+    <nav class="bg-blue-900/70 backdrop-blur-sm border-b border-blue-700/50 px-6 py-4">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center space-x-8">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-white to-blue-300 bg-clip-text text-transparent">
+                    Risk Insights
+                </h1>
+                <div class="flex space-x-6">
+                    <a href="/dashboard" class="nav-link">Dashboard</a>
+                    <a href="/node-tree" class="nav-link">Organization Tree</a>
+                    <a href="/risks" class="nav-link">Risks</a>
+                    <a href="/incidents" class="nav-link">Incidents</a>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-blue-200">{{ user.username }}</span>
+                <form hx-post="/logout" class="inline">
+                    <button type="submit" class="btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="container mx-auto px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

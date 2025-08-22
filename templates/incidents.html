@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Incidents - Risk Insights{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent mb-2">
+            Incident Management
+        </h1>
+        <p class="text-blue-200 text-lg">All incidents within your organizational scope</p>
+    </div>
+
+    <div class="card">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="card-title">Incident Portfolio</h3>
+            <div class="text-blue-200">{{ incidents|length }} total incidents</div>
+        </div>
+
+        <div class="grid gap-4">
+            {% for incident in incidents %}
+            <div class="incident-card">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <h4 class="text-lg font-semibold text-white">{{ incident.name }}</h4>
+                            {% if incident.is_financial %}
+                            <span class="financial-badge">Financial</span>
+                            {% else %}
+                            <span class="non-financial-badge">Non-Financial</span>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="text-blue-200 mb-3">{{ incident.description }}</p>
+                        
+                        <div class="space-y-2">
+                            <div class="text-sm">
+                                <span class="text-blue-300">Root Cause:</span>
+                                <span class="text-white">{{ incident.root_cause }}</span>
+                            </div>
+                            
+                            {% if incident.is_financial and incident.loss_amount %}
+                            <div class="text-sm">
+                                <span class="text-blue-300">Financial Impact:</span>
+                                <span class="text-red-400 font-semibold">${{ "{:,.2f}".format(incident.loss_amount) }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="text-sm text-blue-400">
+                                Reported: {{ incident.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if not incidents %}
+            <div class="text-center py-12">
+                <div class="text-blue-300 text-lg">No incidents found in your organizational scope.</div>
+                <p class="text-blue-400 mt-2">This indicates strong operational controls and risk management.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

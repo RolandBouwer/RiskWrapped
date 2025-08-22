@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Risk Insights{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="text-center">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent mb-2">
+            Risk Dashboard
+        </h1>
+        <p class="text-blue-200 text-lg">
+            {% if user_node %}{{ user_node.name }}{% else %}Organization{% endif %} Overview
+        </p>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="metric-card">
+            <div class="metric-icon bg-blue-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="metric-value">{{ risks_count }}</div>
+                <div class="metric-label">Active Risks</div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon bg-red-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="metric-value">{{ incidents_count }}</div>
+                <div class="metric-label">Incidents</div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon bg-green-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="metric-value">{{ actions_count }}</div>
+                <div class="metric-label">Action Items</div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon bg-yellow-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="metric-value">${{ "{:,.0f}".format(financial_loss) }}</div>
+                <div class="metric-label">Financial Loss</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Recent Risks -->
+        <div class="card">
+            <h3 class="card-title">Recent Risks</h3>
+            <div class="space-y-4">
+                {% for risk in risks %}
+                <div class="risk-item">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-white">{{ risk.title }}</h4>
+                            <p class="text-blue-200 text-sm">{{ risk.description[:100] }}...</p>
+                        </div>
+                        <span class="status-badge status-{{ risk.status.replace(' ', '-') }}">
+                            {{ risk.status.title() }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not risks %}
+                <p class="text-blue-300">No risks found in your scope.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Incidents -->
+        <div class="card">
+            <h3 class="card-title">Recent Incidents</h3>
+            <div class="space-y-4">
+                {% for incident in incidents %}
+                <div class="incident-item">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-white">{{ incident.name }}</h4>
+                            <p class="text-blue-200 text-sm">{{ incident.description[:100] }}...</p>
+                            {% if incident.is_financial and incident.loss_amount %}
+                            <p class="text-red-400 text-sm font-medium">Loss: ${{ "{:,.2f}".format(incident.loss_amount) }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not incidents %}
+                <p class="text-blue-300">No incidents found in your scope.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
